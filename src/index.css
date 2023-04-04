@@ -1,5 +1,6 @@
 :root {
   --brownish: rgb(179, 13, 13);
+  --background: rgb(128, 128, 123);
 }
 
 body,
@@ -104,22 +105,60 @@ body {
   padding: 0.3rem;
   min-width: 80dvw;
   margin: 1.5rem auto;
-  background: rgb(193, 194, 191);
+  background: var(--background);
 }
 
 .text > * {
   max-width: 99%;
   min-width: 95%;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   margin: 0.4rem 0;
 }
 
 .code {
   padding: 1rem;
   font-size: larger;
-  width: 85%;
-  background: rgb(198, 202, 174);
+  width: 99%;
+  background: var(--background);
   margin: 0.3rem auto;
+}
+
+.code input {
+  max-width: 70px;
+  background: var(--background);
+  font-size: 1.2rem;
+}
+
+.code-pre {
+  font-weight: bolder;
+  font-size: larger;
+  color: rgb(240, 230, 203);
+}
+
+.func-container {
+  margin: 1rem auto;
+  border: 1px goldenrod solid;
+  padding: 0.5rem;
+}
+
+span.func {
+  color: rgb(41, 41, 242);
+}
+span.func-name {
+  color: rgb(224, 141, 155);
+}
+span.func {
+  color: rgb(69, 69, 246);
+}
+
+.inst-list {
+  margin: 1rem auto;
+}
+
+.inst-list li {
+  margin: 1rem 3rem;
+  color: rgb(0, 0, 0);
+  font-size: larger;
 }
 
 .transport {
@@ -142,7 +181,12 @@ body {
 .bus-image-container {
   display: flex;
   justify-content: flex-end;
-  width: 3rem;
+  width: 4rem;
+}
+
+.count-down {
+  transform: translateY(-4rem) translateX(3rem);
+  font-size: 4rem;
 }
 
 .train-image-container {
@@ -150,7 +194,7 @@ body {
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  width: 3rem;
+  width: 4rem;
 }
 
 .train-image-container > p {
@@ -158,31 +202,13 @@ body {
 }
 
 .trans-image-bus {
-  max-height: 3rem;
-  max-width: 3rem;
+  max-height: 5rem;
+  max-width: 5rem;
 }
 
 .trans-image-train {
-  max-height: 3rem;
-  max-width: 3rem;
-}
-
-@keyframes moveBus {
-  0% {
-    width: 15%;
-  }
-  100% {
-    width: 100%;
-  }
-}
-
-@keyframes moveTrain {
-  0% {
-    width: 15%;
-  }
-  100% {
-    width: 250%;
-  }
+  max-height: 4rem;
+  max-width: 4rem;
 }
 
 /* Navigate Section */
@@ -206,4 +232,79 @@ body {
 
 .nav-active {
   color: var(--brownish);
+}
+
+/* Poke Section */
+.poke-container {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  align-items: center;
+}
+.poke-button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.poke-button-container button {
+  width: 7rem;
+  background: darkblue;
+  color: lightcoral;
+  height: 3rem;
+  border-radius: 25px;
+}
+
+.poke-button-container button:active {
+  scale: 0.9;
+}
+
+.poke-list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: row wrap;
+  width: 80%;
+}
+
+.poke-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column wrap;
+  width: 31%;
+  border: 1px solid black;
+  border-radius: 15px;
+  margin: 0.3rem;
+  background: rgba(62, 62, 62, 0.361);
+}
+
+.poke-card-name {
+  color: black;
+  font-size: larger;
+}
+
+@keyframes moveBus {
+  0% {
+    width: 10%;
+  }
+  5% {
+    width: 15%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes moveTrain {
+  0% {
+    width: 10%;
+  }
+  5% {
+    width: 15%;
+  }
+  100% {
+    width: 250%;
+    display: none;
+  }
 }

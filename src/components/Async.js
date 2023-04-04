@@ -1,18 +1,30 @@
-import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
 import busImg from '../images/bus.png'
 import trainImg from '../images/train.png'
+import CountDown from './shared/CountDown'
 
-const Async = () => {
-  const [animateBus, setAnimateBus] = useState({})
-  const [animateTrainBerlin, setAnimateTrainBerlin] = useState({})
-  const [animateTrainHannover, setAnimateTrainHannover] = useState({})
-  const [animateTrainHamburg, setAnimateTrainHamburg] = useState({})
-  const [animateTrainMunich, setAnimateTrainMunich] = useState({})
+const Async = ({
+  countDown,
+  setCountDown,
+
+  startCountDown,
+  startAnimations,
+  animation,
+  setAnimation,
+  sp,
+}) => {
+  const { bus, berlin, hamburg, munich } = animation
 
   const busMoving = () => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        setAnimateBus({ animation: 'moveBus 3s ease-in-out 1s forwards' })
+        setAnimation((pre) => ({
+          ...pre,
+          bus: {
+            animation: `moveBus 3s ease-in 1s forwards`,
+          },
+        }))
         const error = false
         if (!error) {
           resolve()
@@ -26,53 +38,58 @@ const Async = () => {
   const trainMoving = () => {
     const asyncBusToBerlinTrain = async () => {
       await busMoving()
-
-      setTimeout(() => {
-        setAnimateTrainBerlin({
-          animation: `moveTrain 3s ease-in 1s forwards`,
-        })
-      }, 3000)
+      startAnimations('berlin', '3000')
     }
     asyncBusToBerlinTrain()
-
-    setTimeout(() => {
-      setAnimateTrainHannover({ animation: `moveTrain 3s ease-in 1s forwards` })
-    }, 2000)
-
-    setTimeout(() => {
-      setAnimateTrainHamburg({ animation: `moveTrain 3s ease-in 1s forwards` })
-    }, 4000)
-
-    setTimeout(() => {
-      setAnimateTrainMunich({ animation: `moveTrain 3s ease-in 1s forwards` })
-    }, 2500)
+    startAnimations('hamburg', '3000')
+    startAnimations('munich', '2500')
   }
 
   const clickOnBus = () => {
     trainMoving()
+    startCountDown()
   }
+
+  useEffect(() => {
+    setAnimation({
+      bus: {},
+      berlin: {},
+      hamburg: {},
+      munich: {},
+    })
+    setCountDown(3)
+  }, [])
 
   return (
     <div className='start'>
       <h1>Async/Await</h1>
       <section className='text'>
         <p>
-          To solve this problem you require a promise from Berlin-train only to
-          wait until our bus arrives
+          As in Promises previously we need a {sp('Promise', 'blue')} from
+          berlin train, that it is not leaving until the bus arrives
         </p>
-        <p>so you should use "Promise" constructor as following.</p>
         <p>
-          This way we can use the power of the browser to solve the problem of
-          Threading by adding functions to the stack of the browser to be
-          resolved later on when the conditions are met.
+          in other words we need to {sp('asynchronous')} the{' '}
+          {sp('busTravelPlan')} and the {sp('berlinIsLeaving')}
         </p>
-        <p>"like when the data are fetched from the server"</p>
-        <p>Click on the bus to start! 🤏</p>
+        <p>
+          which means{sp('berlinIsLeaving')} will {sp('await')} the{' '}
+          {sp('busTravelPlan')}
+        </p>
+        <p>While other trains can continue their plans as usual</p>
+        <p>so we should use {sp('Promise', 'blue')} constructor again.</p>
+        <p>
+          the only deference this time that we will use {sp('async await')}
+          instead of {sp('then')} to fulfill the {sp('Promise', 'blue')}.
+        </p>
+        <p>Click 🤏 on the bus to start!</p>
       </section>
       <section className='demo'>
         <div className='transport'>
           <div className='bus'>
-            <div className='bus-image-container' style={animateBus}>
+            <div className='bus-image-container' style={bus}>
+              <CountDown countDown={countDown} />
+
               <img
                 onClick={clickOnBus}
                 className='trans-image trans-image-bus'
@@ -82,7 +99,7 @@ const Async = () => {
             </div>
           </div>
           <div className='train'>
-            <div className='train-image-container' style={animateTrainBerlin}>
+            <div className='train-image-container' style={berlin}>
               <p>Berlin</p>
               <img
                 className='trans-image trans-image-train'
@@ -90,15 +107,7 @@ const Async = () => {
                 alt='train'
               />
             </div>
-            <div className='train-image-container' style={animateTrainHannover}>
-              <p>Hannover</p>
-              <img
-                className='trans-image trans-image-train'
-                src={trainImg}
-                alt='train'
-              />
-            </div>
-            <div className='train-image-container' style={animateTrainHamburg}>
+            <div className='train-image-container' style={hamburg}>
               <p>Hamburg</p>
               <img
                 className='trans-image trans-image-train'
@@ -106,7 +115,7 @@ const Async = () => {
                 alt='train'
               />
             </div>
-            <div className='train-image-container' style={animateTrainMunich}>
+            <div className='train-image-container' style={munich}>
               <p>Munich</p>
               <img
                 className='trans-image trans-image-train'
@@ -117,43 +126,153 @@ const Async = () => {
           </div>
         </div>
       </section>
-      <pre className='code'>
-        {`
-// by clicking on the bus you'll StartTrip func
-// which will call one func only this time 
-// TrainTravelPlan func will start the trains.
-// But this time ,by using Promise, in BusTravelPlan 
-// 
-
-        function BusTravelPlan () = {
-// busIsLeaving will start the animation of the bus
-          return new Promise((resolve, reject) => {
-            setTimeout(() => {
-              busIsLeaving()
-              const error = false
-              if (!error) {
-                resolve()
-              } else {
-                reject('ERROR: Something went wrong!')
-              }
-            }, 3000)
-          })
-        }
-
-        function trainTravelPlan () = {
-// trainIsLeaving will start the animation of the bus after 5 sec 
-          setTimeout(() => {
-            trainIsLeaving()
-          }, 3000)
-        }
-
-        function StartTrip () = {
-// This time trainTravelPlan is called inside busTravelPlan 
-// as a callback function 
-          busTravelPlan(trainTravelPlan)
-        }
-  `}
-      </pre>
+      <div className='code'>
+        <pre className='code-pre'>
+          <div className='func-container'>
+            {sp('function', 'blue')}
+            {sp('busTravelPlan')}() = {'{'}
+            <br />
+            <pre>
+              {'  '}
+              {sp('return', 'red')}
+              {sp('new', 'red')}
+              {sp('Promise', 'blue')}((resolve, reject) {'=>'} {'{'}
+              <br />
+              {'    '}
+              {sp('setTimeOut', 'blue')}
+              {'(() => {'}
+              <br />
+              {'      '}
+              {sp('busIsLeaving')}()
+              <br />
+              {'      '}
+              {sp('resolve')}()
+              <br />
+              {'      '}
+              {sp('reject')}('ERROR: Promise not fulfilled')
+              <br />
+              {'     '}
+              {'}, '}
+              {sp('3000', 'blue')}
+              {')'}
+              <br />
+              {'   '}
+              {'})'}
+              <br />
+              {'}'}
+            </pre>
+          </div>
+          <div className='func-container'>
+            {sp('function', 'blue')}
+            {sp('trainsTravelPlan')}() = {'{'}
+            <br />
+            <pre>
+              {'   '}
+              {sp('const', 'red')}
+              {sp('asyncBusToBerlin')}={sp('async', 'red')}() {'{'}
+              <br />
+              {'          '}
+              {sp('await', 'red')}
+              {sp('busTravelPlan')}()
+              <br />
+              {'            '}
+              {sp('setTimeOut', 'blue')}
+              {'(() => {'}
+              <br />
+              {'              '}
+              {sp('berlinIsLeaving')}()
+              <br />
+              {'              '}
+              {'}, '}
+              {sp('3000', 'blue')}
+              {')'}
+              <br />
+              {'          '}
+              {'}'}
+              <br />
+              {'  '}
+              {sp('asyncBusToBerlin')}()
+              <br />
+              <br />
+              {'  '}
+              {sp('setTimeOut', 'blue')}
+              {'(() => {'}
+              <br />
+              {'    '}
+              {sp('hamburgIsLeaving')}()
+              <br />
+              {'  '}
+              {'}, '}
+              {sp('2000', 'blue')}
+              {')'}
+              <br />
+              {'  '}
+              {sp('setTimeOut', 'blue')}
+              {'(() => {'}
+              <br />
+              {'    '}
+              {sp('munichIsLeaving')}()
+              <br />
+              {'  '}
+              {'}, '}
+              {sp('2500', 'blue')}
+              {')'}
+              <br />
+              {'}'}
+            </pre>
+          </div>
+          <div className='func-container'>
+            {sp('function', 'blue')}
+            {sp('StartTrip')}() = {'{'}
+            <br />
+            <pre>
+              {'    '}
+              {sp('trainTravelPlan')}()
+              <br />
+              {'}'}
+              <br />
+              <br />
+              {sp('StartTrip')}()
+              <br />
+            </pre>
+          </div>
+        </pre>
+        <ol className='inst-list'>
+          <li>
+            by clicking on the bus you'll call
+            {sp('StartTrip')}.
+          </li>
+          <li>
+            which will call only one func this time {sp('trainTravelPlan')}
+          </li>
+          <li>
+            {sp('trainTravelPlan')} will call {sp('berlinIsLeaving')} first and
+            then other trains functions.
+          </li>
+          <li>Normally this will lead tp blocking problem as in Callbacks</li>
+          <li>
+            But this time, by using a Promise constructor inside{' '}
+            {sp('busTravelPlan')} we can bound {sp('berlinIsLeaving')} to the{' '}
+            {sp('Promise', 'blue')} in {sp('busTravelPlan')}
+          </li>
+          <li>
+            In this case, Only the Berlin train will wait until the Bus arrives
+            while other Trains can continue their plans as usual
+          </li>
+          <li>
+            The {sp('async await', 'red')} operators work as an EventListener
+            and will listen to the changes in Browser Stack, when the condition
+            of {sp('busTravelPlan')}
+            is fulfilled then it will call the promised function which in this
+            case {sp('berlinIsLeaving')}.
+          </li>
+          <li>
+            Although the function will work perfectly we are still missing a
+            proper way to catch Errors. for that we will use{' '}
+            {sp('try catch', 'red')} operators
+          </li>
+        </ol>
+      </div>
     </div>
   )
 }

@@ -1,9 +1,27 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import Cookie from 'js-cookie'
 
 const Overlay = () => {
-  const [show, setShow] = useState({ display: 'none' })
+  const setCookie = (cookieName, userin) => {
+    Cookie.set(cookieName, userin, {
+      expires: 1,
+      secure: true,
+      sameSite: 'strict',
+      path: '/',
+    })
+  }
+  const getCookie = (cookieName) => {
+    return Cookie.get(cookieName)
+  }
+
+  const [show, setShow] = useState(
+    getCookie('asyncPrimerConfirmed')
+      ? { display: 'none' }
+      : { display: 'flex' }
+  )
 
   const hide = () => {
+    setCookie('asyncPrimerConfirmed')
     setShow({ display: 'none' })
   }
 

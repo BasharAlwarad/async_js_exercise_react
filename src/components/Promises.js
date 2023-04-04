@@ -1,18 +1,30 @@
-import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
 import busImg from '../images/bus.png'
 import trainImg from '../images/train.png'
+import CountDown from './shared/CountDown'
 
-const Promises = () => {
-  const [animateBus, setAnimateBus] = useState({})
-  const [animateTrainBerlin, setAnimateTrainBerlin] = useState({})
-  const [animateTrainHannover, setAnimateTrainHannover] = useState({})
-  const [animateTrainHamburg, setAnimateTrainHamburg] = useState({})
-  const [animateTrainMunich, setAnimateTrainMunich] = useState({})
+const Promises = ({
+  countDown,
+  setCountDown,
+
+  startCountDown,
+  startAnimations,
+  animation,
+  setAnimation,
+  sp,
+}) => {
+  const { bus, berlin, hamburg, munich } = animation
 
   const busMoving = () => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        setAnimateBus({ animation: 'moveBus 3s ease-in-out 1s forwards' })
+        setAnimation((pre) => ({
+          ...pre,
+          bus: {
+            animation: `moveBus 3s ease-in 1s forwards`,
+          },
+        }))
         const error = false
         if (!error) {
           resolve()
@@ -25,51 +37,45 @@ const Promises = () => {
 
   const trainMoving = () => {
     busMoving()
-      .then(() =>
-        setTimeout(() => {
-          setAnimateTrainBerlin({
-            animation: `moveTrain 3s ease-in 1s forwards`,
-          })
-        }, 3000)
-      )
+      .then(() => startAnimations('berlin', '3000'))
       .catch((er) => console.error(er))
-
-    setTimeout(() => {
-      setAnimateTrainHannover({ animation: `moveTrain 3s ease-in 1s forwards` })
-    }, 2000)
-    setTimeout(() => {
-      setAnimateTrainHamburg({ animation: `moveTrain 3s ease-in 1s forwards` })
-    }, 4000)
-    setTimeout(() => {
-      setAnimateTrainMunich({ animation: `moveTrain 3s ease-in 1s forwards` })
-    }, 2500)
+    startAnimations('hamburg', '2000')
+    startAnimations('munich', '2500')
   }
 
   const clickOnBus = () => {
     trainMoving()
+    startCountDown()
   }
+
+  useEffect(() => {
+    setAnimation({
+      bus: {},
+      berlin: {},
+      hamburg: {},
+      munich: {},
+    })
+    setCountDown(3)
+  }, [])
 
   return (
     <div className='start'>
       <h1>Promises</h1>
       <section className='text'>
         <p>
-          To solve this problem you require a promise from Berlin-train only to
-          wait until our bus arrives
+          we need a promise from berlin train, that it is not leaving until the
+          bus arrives
         </p>
-        <p>so you should use "Promise" constructor as following.</p>
-        <p>
-          This way we can use the power of the browser to solve the problem of
-          Threading by adding functions to the stack of the browser to be
-          resolved later on when the conditions are met.
-        </p>
-        <p>"like when the data are fetched from the server"</p>
-        <p>Click on the bus to start! 🤏</p>
+        <p>While other trains can continue their plans as usual</p>
+        <p>so we should use {sp('Promise', 'blue')} constructor.</p>
+        <p>Click 🤏 on the bus to start!</p>
       </section>
       <section className='demo'>
         <div className='transport'>
           <div className='bus'>
-            <div className='bus-image-container' style={animateBus}>
+            <div className='bus-image-container' style={bus}>
+              <CountDown countDown={countDown} />
+
               <img
                 onClick={clickOnBus}
                 className='trans-image trans-image-bus'
@@ -79,7 +85,7 @@ const Promises = () => {
             </div>
           </div>
           <div className='train'>
-            <div className='train-image-container' style={animateTrainBerlin}>
+            <div className='train-image-container' style={berlin}>
               <p>Berlin</p>
               <img
                 className='trans-image trans-image-train'
@@ -87,15 +93,7 @@ const Promises = () => {
                 alt='train'
               />
             </div>
-            <div className='train-image-container' style={animateTrainHannover}>
-              <p>Hannover</p>
-              <img
-                className='trans-image trans-image-train'
-                src={trainImg}
-                alt='train'
-              />
-            </div>
-            <div className='train-image-container' style={animateTrainHamburg}>
+            <div className='train-image-container' style={hamburg}>
               <p>Hamburg</p>
               <img
                 className='trans-image trans-image-train'
@@ -103,7 +101,7 @@ const Promises = () => {
                 alt='train'
               />
             </div>
-            <div className='train-image-container' style={animateTrainMunich}>
+            <div className='train-image-container' style={munich}>
               <p>Munich</p>
               <img
                 className='trans-image trans-image-train'
@@ -114,43 +112,167 @@ const Promises = () => {
           </div>
         </div>
       </section>
-      <pre className='code'>
-        {`
-// by clicking on the bus you'll StartTrip func
-// which will call one func only this time 
-// TrainTravelPlan func will start the trains.
-// But this time ,by using Promise, in BusTravelPlan 
-// 
-
-        function BusTravelPlan () = {
-// busIsLeaving will start the animation of the bus
-          return new Promise((resolve, reject) => {
-            setTimeout(() => {
-              busIsLeaving()
-              const error = false
-              if (!error) {
-                resolve()
-              } else {
-                reject('ERROR: Something went wrong!')
-              }
-            }, 3000)
-          })
-        }
-
-        function trainTravelPlan () = {
-// trainIsLeaving will start the animation of the bus after 5 sec 
-          setTimeout(() => {
-            trainIsLeaving()
-          }, 3000)
-        }
-
-        function StartTrip () = {
-// This time trainTravelPlan is called inside busTravelPlan 
-// as a callback function 
-          busTravelPlan(trainTravelPlan)
-        }
-  `}
-      </pre>
+      <div className='code'>
+        <pre className='code-pre'>
+          <div className='func-container'>
+            {sp('function', 'blue')}
+            {sp('busTravelPlan')}() = {'{'}
+            <br />
+            <pre>
+              {'  '}
+              {sp('return', 'red')}
+              {sp('new', 'red')}
+              {sp('Promise', 'blue')}((resolve, reject) {'=>'} {'{'}
+              <br />
+              {'    '}
+              {sp('setTimeOut', 'blue')}
+              {'(() => {'}
+              <br />
+              {'      '}
+              {sp('busIsLeaving')}()
+              <br />
+              {'      '}
+              {sp('resolve')}()
+              <br />
+              {'      '}
+              {sp('reject')}('ERROR: Promise not fulfilled')
+              <br />
+              {'     '}
+              {'}, '}
+              {sp('3000', 'blue')}
+              {')'}
+              <br />
+              {'   '}
+              {'})'}
+              <br />
+              {'}'}
+            </pre>
+          </div>
+          <div className='func-container'>
+            {sp('function', 'blue')}
+            {sp('trainsTravelPlan')}() = {'{'}
+            <br />
+            <pre>
+              {'  '}
+              {sp('busTravelPlan')}()
+              <br />
+              {'   '}
+              {'.'}
+              {sp('then')}
+              {'(() => {'}
+              <br />
+              {'      '}
+              {sp('setTimeOut', 'blue')}
+              {'(() => {'}
+              <br />
+              {'        '}
+              {sp('berlinIsLeaving')}()
+              <br />
+              {'      '}
+              {'}, '}
+              {sp('3000', 'blue')}
+              {'))'}
+              <br />
+              {'   '}
+              {'.'}
+              {sp('catch')}
+              {'((error) => {'}
+              <br />
+              {'      '}
+              {sp('console.error', 'blue')}
+              {'(error)'}
+              {'        '}
+              <br />
+              {'      '}
+              {'}'}
+              <br />
+              <br />
+              {'  '}
+              {sp('setTimeOut', 'blue')}
+              {'(() => {'}
+              <br />
+              {'    '}
+              {sp('hamburgIsLeaving')}()
+              <br />
+              {'  '}
+              {'}, '}
+              {sp('2000', 'blue')}
+              {')'}
+              <br />
+              {'  '}
+              {sp('setTimeOut', 'blue')}
+              {'(() => {'}
+              <br />
+              {'    '}
+              {sp('munichIsLeaving')}()
+              <br />
+              {'  '}
+              {'}, '}
+              {sp('2500', 'blue')}
+              {')'}
+              <br />
+              {'}'}
+            </pre>
+          </div>
+          <div className='func-container'>
+            {sp('function', 'blue')}
+            {sp('StartTrip')}() = {'{'}
+            <br />
+            <pre>
+              {'    '}
+              {sp('trainTravelPlan')}()
+              <br />
+              {'}'}
+              <br />
+              <br />
+              {sp('StartTrip')}()
+              <br />
+            </pre>
+          </div>
+        </pre>
+        <ol className='inst-list'>
+          <li>
+            by clicking on the bus you'll call
+            {sp('StartTrip')}.
+          </li>
+          <li>
+            which will call only one func this time {sp('trainTravelPlan')}
+          </li>
+          <li>
+            {sp('trainTravelPlan')} will call {sp('berlinIsLeaving')} first and
+            then other trains functions.
+          </li>
+          <li>Normally this will lead to blocking problem as in Callbacks</li>
+          <li>
+            But this time, by using a Promise constructor inside{' '}
+            {sp('busTravelPlan')} we can bound {sp('berlinIsLeaving')} to the{' '}
+            {sp('Promise', 'blue')} in {sp('busTravelPlan')}
+          </li>
+          <li>
+            In this case, Only the Berlin train will wait until the Bus arrives
+            while other Trains can continue their plans as usual
+          </li>
+          <li>
+            The {sp('then')} function works as an EventListener and will listen
+            to the changes in the Browser Stack, when the condition of{' '}
+            {sp('busTravelPlan')} is fulfilled then it will call the promised
+            function which in this case {sp('berlinIsLeaving')}.
+          </li>
+          <li>
+            The {sp('catch')} function works also as an EventListener and will
+            listen to the changes in Browser Stack, when the condition of{' '}
+            {sp('busTravelPlan')} is not fulfilled then it will throw a custom
+            Error
+          </li>
+          <li>
+            and finally 🤏
+            <Link to={`${window.location.origin}/asynchronous/async`}>
+              Async/Await
+            </Link>{' '}
+            works exactly the same, but with much more convenient!
+          </li>
+        </ol>
+      </div>
     </div>
   )
 }
